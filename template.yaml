@@ -12,8 +12,8 @@ Resources:
     Type: AWS::Serverless::Function
     DependOns: DynamoDBTable
     Properties:
-      CodeUri: hello-world/
-      Handler: hello-world
+      CodeUri: get-employee/
+      Handler: get-employee
       Runtime: go1.x
       Policies:
         - DynamoDBCrudPolicy:
