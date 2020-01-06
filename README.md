@@ -1,4 +1,10 @@
 # paysplis
+## TODO
+* List all emplyee
+* Add new employee
+* Update employee information
+* Send paysplis every month to employee who still work at company
+
 
 This is a sample template for paysplis - Below is a brief explanation of what we have generated for you:
 
