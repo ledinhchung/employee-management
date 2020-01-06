@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  paysplis
+
+Globals:
+  Function:
+    Timeout: 5
+
+Resources:
+  GetEmployeesFunctions:
+    Type: AWS::Serverless::Function
+    DependOns: DynamoDBTable
+    Properties:
+      CodeUri: hello-world/
+      Handler: hello-world
+      Runtime: go1.x
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DynamoDBTable
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /employee
+            Method: GET
+  AddEmployeeFunction:
+    Type: AWS::Serverless::Function
+    DependOns: DynamoDBTable
+    Properties:
+      CodeUri: add-employee/
+      Handler: add-employee
+      Runtime: go1.x
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DynamoDBTable
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /employee
+            Method: POST
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Employees
+      AttributeDefinitions:
+        - AttributeName: Name
+          AttributeType: S
+      KeySchema:
+        - AttributeName: Name
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
