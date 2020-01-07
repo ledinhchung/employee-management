@@ -31,16 +31,11 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	svc := dynamodb.New(sess)
 
 	tableName := "Employees"
-	employeeName := "Dat"
-
-	result, err := svc.GetItem(&dynamodb.GetItemInput{
+	params := &dynamodb.ScanInput{
 		TableName: aws.String(tableName),
-		Key: map[string]*dynamodb.AttributeValue{
-			"Name": {
-				S: aws.String(employeeName),
-			},
-		},
-	})
+	}
+
+	result, err := svc.Scan(params)
 
 	if err != nil {
 		return events.APIGatewayProxyResponse{
@@ -49,9 +44,9 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}, nil
 	}
 
-	employee := Employee{}
+	employees := []Employee{}
 
-	err = dynamodbattribute.UnmarshalMap(result.Item, &employee)
+	err = dynamodbattribute.UnmarshalListOfMaps(result.Items, &employees)
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -62,7 +57,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 
 	return events.APIGatewayProxyResponse{
-		Body:       fmt.Sprintf("Welcome to GoLang and Lambda %v, %v", employee.Name, employee.Email),
+		Body:       fmt.Sprintf("%+v", employees),
 		StatusCode: 200,
 	}, nil
 }
