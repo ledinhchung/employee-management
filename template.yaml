@@ -8,7 +8,22 @@ Globals:
     Timeout: 5
 
 Resources:
-  GetEmployeesFunctions:
+  SendPaysplisFunction:
+    Type: AWS::Serverless::Function
+    DependOns: DynamoDBTable
+    Properties:
+      CodeUri: send-paysplis/
+      Handler: send-paysplis
+      Runtime: go1.x
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DynamoDBTable
+      Events:
+        ScheduleTask:
+          Type: Schedule
+          Properties:
+            Schedule: rate(60 minute)
+  GetEmployeesFunction:
     Type: AWS::Serverless::Function
     DependOns: DynamoDBTable
     Properties:
